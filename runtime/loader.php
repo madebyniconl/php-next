@@ -185,7 +185,7 @@ function ultra2_protect_lib(): FFI
 function load_ultra2(string $path, ?string $projectId = null): void
 {
     if (!is_file($path)) {
-        throw new RuntimeException('ULTRA2: blob not found');
+        throw new RuntimeException('ULTRA2: invalid container');
     }
 
     $blob = file_get_contents($path);
@@ -200,7 +200,7 @@ function load_ultra2(string $path, ?string $projectId = null): void
 
     $expected = hash_hmac('sha256', $iv . $ciphertext, $key, true);
     if (!hash_equals($expected, $hmac)) {
-        throw new RuntimeException('ULTRA2: HMAC mismatch');
+        throw new RuntimeException('ULTRA2: verification failed');
     }
 
     $plaintext = openssl_decrypt($ciphertext, 'aes-256-ctr', $key, OPENSSL_RAW_DATA, $iv);
